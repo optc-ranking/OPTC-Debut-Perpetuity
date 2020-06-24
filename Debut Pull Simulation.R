@@ -2,8 +2,9 @@
 debut.cdf <- c(2.748, 9.367, 14.715, 20.519, 25.209, 31.929, 33.800, 35.619, 39.418, 44.862, 46.377, 51.195, 52.537, 53.841, 57.989, 59.143, 60.266, 63.837, 64.830, 68.657, 69.518, 72.257, 73.020, 73.761, 76.616, 77.259, 77.884, 78.491, 79.083, 100.000)
 anni.cdf <- c(4.777,	8.921,	17.197,	24.720,	37.896,	43.688,	46.378,	48.939,	54.718,	56.881,	58.941,	62.672,	64.455,	66.153,	72.077,	73.411,	74.681,	76.982,	78.081,	100.000)
 
-#Amount of gems saved up before initiating plan to pull every quarter 
+#Amount of gems saved up before initiating plan to pull every quarter. You can modify this
 initial.savings <- c(1500,1800,2100,2400,2700,3000,3300,3600,3900,4200)
+ntrials <- length(initial.savings)
 #Set up the initial savings for the Monte Carlo
 savings <- array(data = 0, dim = c(10,100000))
 for(i in 1:10)
@@ -32,7 +33,7 @@ months.cutoff <- 120
 
 
 #Test out each of the initial savings
-for(a in 1:10)
+for(a in 1:ntrials)
 {
   #Monte Carlo simulation of 100,000 trials
   for(b in 1:100000)
@@ -115,7 +116,7 @@ for(a in 1:10)
     #Output to keep track of number of trials
     if(b %% 10000 == 0)
     {
-      print((a-1)*10 + b/10000)
+      print((a-1)*ntrials + b/10000)
     }
   }
 }
@@ -123,9 +124,12 @@ for(a in 1:10)
 
 
 #Output
-for(i in 1:10)
+for(i in 1:ntrials)
 {
-  hist(ndebut[i,], main = paste(initial.savings[i], "gems saved"), freq = FALSE, ylim = c(0,0.5))
+  h <- hist(ndebut[i,], plot = FALSE)
+  h$counts <- h$counts/sum(h$counts)
+  plot(h, main = paste(initial.savings[i], "gems saved"), ylim = c(0,1))
+  
   #Probability of setting up the perpetuity
   print(paste(initial.savings[i], "gems saved for Anni"))
   print(paste(sum(ndebut[i,] == 50)/100000, "probability of setting up the perpetuity"))
